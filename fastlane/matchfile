@@ -1,0 +1,4 @@
+git_url("")
+app_identifier("") # The bundle identifier of your app
+username("r") # Your Apple email address
+team_id("") # Developer Portal Team ID

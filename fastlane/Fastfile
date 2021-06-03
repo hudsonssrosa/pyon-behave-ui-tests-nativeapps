@@ -1,0 +1,59 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+
+  desc "Run the Pyon UI Tests for Native Apps using Python-Behave"
+  lane :pyon_ui_tests do
+    app_workspace = "../<YOUR_APP_SOURCE_NAME>.xcworkspace"
+    stg_scheme = "<YOUR_APP_SOURCE_NAME>Staging"
+    ipa_file_name = '<APP_BUILD_NAME>.app'
+    path_for_build = "/tmp/build/app"
+    
+    # INSTALLING AND RUNNING PYTHON, JAVA AND APPIUM
+    Dir.chdir("../Fastfile") do
+      sh ("sh fastlane_main_resources.sh")
+      sh ("sh fastlane_appium.sh")
+      reset_simulator_contents
+    end
+
+    # INSTALL GEMS
+    sh ('bundle install')
+    sh ('bundle exec pod install')
+    sh ('rm -rf ~/Library/Developer/Xcode/DerivedData/')
+    
+    # PREPARING XCODE SIMULATOR
+    xcode_select("/Applications/Xcode.app")
+    sh ('xcrun --sdk macosx --show-sdk-path')
+    
+    # BUILDING APP
+    sh ("echo 'Building #{ipa_file_name} for Testing'")
+    sh ("xcodebuild build-for-testing -workspace \"#{app_workspace}\" -scheme \"#{stg_scheme}\" -destination \"platform=iOS Simulator,name=iPhone 12,OS=14.5\" -derivedDataPath \"build\"")
+    deriv_app_path = "#{ENV['BITRISE_SOURCE_DIR']}/fastlane/build/Build/Products/Debug-iphonesimulator/#{ipa_file_name}"
+    
+    # ANOTHER WAY IS:
+    # sh ("xcodebuild build-for-testing -workspace \"#{app_workspace}\" -scheme \"#{stg_scheme}\" -destination \"platform=iOS Simulator,name=iPhone 12,OS=14.5\" clean build CONFIGURATION_BUILD_DIR=#{path_for_build}")
+    # deriv_app_path = "#{path_for_build}/#{ipa_file_name}"
+    
+    # INSTALLING AND RUNNING ALL RESOURCES FOR UI TESTS...
+    Dir.chdir("../Fastfile") do
+      sh ("python3 setup_python_env_update.py")
+      sh ("sh fastlane_run_behave.sh #{deriv_app_path}")
+    end
+  end
+
+end

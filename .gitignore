@@ -1,0 +1,47 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python
+.cache
+# .local
+.pkl
+
+#idea
+*.idea
+.idea
+/shelf/
+/workspace.xml
+
+#vscode
+.DS_Store
+.vscode/
+
+# Environments and Settings
+env_settings.properties
+validate_ci.sh
+.env
+.venv
+env/
+venv/
+venv*/
+ENV/
+
+# Reports and Logs
+report.xml
+allure-report/
+allure-results/
+allure-results-*/
+*.log
+log*.html
+output*.xml
+report*.html
+*.pdf
+
+# Tunnels
+.ltcbin
+tunnels/
+
+# External Dists
+app_distribution/

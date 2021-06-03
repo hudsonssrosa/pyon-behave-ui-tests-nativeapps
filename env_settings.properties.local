@@ -1,0 +1,61 @@
+[report]
+# Set 'false' the report generation if is running on CI server
+report_library_path = .resources/allure-2.13.2/bin/allure
+generate_report = false
+
+[default]
+# To execute all tests, the behave_tag is null by default, but you can define any features as you want separating by comma
+app_url_dev =
+admin_app_url_dev =
+
+app_url_staging =
+admin_app_url_staging =
+
+app_url_prod =
+admin_app_url_prod =
+
+email_validation_url = https://www.mailinator.com/v3/#/#inboxpane
+
+[cli-args-debug]
+# To DEBUG TESTS, change to 'true' the 'development_mode' property (only in this case)
+
+development_mode = false
+debug_flag_environment = staging
+
+# Get more information about PyonUIT CLI, type in the terminal console: "python behave_runner.py --help"
+debug_flag_target = remote_emulation
+debug_flag_os = Android
+debug_flag_os_version = 11.0
+debug_flag_device_name = Samsung Galaxy A51
+debug_flag_mode = native_app
+debug_behave_tags = demo-wikipedia
+debug_behave_excluded_tags = wip
+debug_flag_orientation = Portrait
+debug_flag_language = en
+debug_flag_locale = en_GB
+
+    # WITH IOS
+    ; debug_flag_target = remote_emulation
+    ; debug_flag_os = iOS
+    ; debug_flag_os_version = 14.5
+    ; debug_flag_device_name = iPhone 12
+    ; debug_flag_mode = native_app
+    ; debug_behave_tags = demo-wikipedia
+    ; debug_behave_excluded_tags = wip
+    ; debug_flag_orientation = Portrait
+    ; debug_flag_language = en
+    ; debug_flag_locale = en_GB
+
+[default-device]
+appium_host_ip = 0.0.0.0
+appium_host_port = 4723
+mobile_automation_name = XCUITest
+mobile_app_path =
+
+[local-device]
+xcode_local_webdriveragent = /usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj
+
+[browserstack]
+bs_user_key =
+bs_access_key =
+bs_record_video = true
