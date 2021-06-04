@@ -487,7 +487,7 @@ After having a scenario defined, make sure that `development_mode` is `false` in
 ```bash
         You can implement step definitions for undefined steps with these snippets:
 
-        @given('Given that app is open at Home page')
+        @given('that app is open at Home page')
         def step_impl(context):
             raise NotImplementedError(u'STEP: Given that app is open at Home page')
 
@@ -528,7 +528,7 @@ Then, just paste your snippets from clipboard into the `search_car_steps.py`.
 from behave import *
 
 
-@given('Given that app is open at Home page')
+@given('that app is open at Home page')
 def step_impl(context):
     raise NotImplementedError(u'STEP: Given that app is open at Home page')
 
