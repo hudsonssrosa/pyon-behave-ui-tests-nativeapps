@@ -1,7 +1,7 @@
 [report]
 # Set 'false' the report generation if is running on CI server
 report_library_path = .resources/allure-2.13.2/bin/allure
-generate_report = false
+generate_report = true
 
 [default]
 # To execute all tests, the behave_tag is null by default, but you can define any features as you want separating by comma
