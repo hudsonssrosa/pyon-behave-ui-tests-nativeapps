@@ -23,7 +23,7 @@ PYON_APP_PATH='/Users/hudsonssrosa/git_projects/pyon-behave-ui-tests-nativeapps/
     # WITH IOS
     # PYON_APP_PATH='/Users/<PC_USER_NAME>/Library/Developer/Xcode/DerivedData/.../Build/Products/Debug-iphonesimulator/<YOUR_APP_BUILD>.app'
 
-PYON_TAGS='demo-wikipedia'
+PYON_TAGS='login-sample'
 PYON_EXCLUDED_TAG='wip'
 
 echo 'COPYING PROPERTIES'

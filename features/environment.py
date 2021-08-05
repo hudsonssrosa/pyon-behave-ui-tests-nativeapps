@@ -110,8 +110,11 @@ def take_screenshot_when_is_failed(context):
 
 
 def reset_xcode_simulator():
-    if Conf.get_mobile_automation_name() == "XCUITest":
-        os.system("xcrun simctl erase all")
+    try:
+        if Conf.get_mobile_automation_name() == "XCUITest":
+            os.system("xcrun simctl erase all")
+    except Exception as ex:
+        Rexc.raise_exception_error(f"Check if the capability 'mobile_automation_name' is set properly! Is it XCUITest (iOS) or UiAutomator2 (iOS): ", ex)
 
 
 def shutdown_xcode_simulator():

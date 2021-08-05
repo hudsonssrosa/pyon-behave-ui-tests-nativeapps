@@ -73,7 +73,7 @@ Into this file, to consider a development setting, ensure the property `developm
     debug_flag_os_version = 11.0
     debug_flag_device_name = Samsung Galaxy A51
     debug_flag_mode = native_app
-    debug_behave_tags = demo-wikipedia
+    debug_behave_tags = login-sample
     debug_behave_excluded_tags = wip
     debug_flag_orientation = Portrait
     debug_flag_language = en
@@ -150,7 +150,7 @@ Finally, you can vary the command options such as these samples below and much m
      python behave_runner.py --target local_emulation
      python behave_runner.py --target local_emulation --os iOS --os_version '14.3' --device_name 'iPhone 12' --orientation Landscape --app_path'.resources\\mobile_automation\\Sample.ipa'
      python behave_runner.py --target bs --mode native_app --os iOS --os_version '14.0' --device_name 'iPhone 11' --app_path '.resources\\mobile_automation\\Sample.ipa'
-     python behave_runner.py --target real_device --mode native_app --os Android --os_version '10.0' --device_name 'Samsung Galaxy A51' --tags demo-wikipedia --exclude slow
+     python behave_runner.py --target real_device --mode native_app --os Android --os_version '10.0' --device_name 'Samsung Galaxy A51' --tags login-sample --exclude slow
 ```
 
 ## SETUP FOR NATIVE APPS RUNNING LOCALLY
@@ -457,8 +457,7 @@ All the tests are documented in [Gherkin](https://behave.readthedocs.io/en/lates
     features
     └─── feature_domains
         └─── staging
-            │   demo_wikipedia.feature
-            │   login.feature
+            │   automation_sample_login.feature
             |   ...
             production
             └─── ...
@@ -469,37 +468,37 @@ All the tests are documented in [Gherkin](https://behave.readthedocs.io/en/lates
 With this, you could create a simple scenario that validates if user can search a content in the app. You just need to use the keywords with `Feature:`, `Background:`, `Scenario:`, and describe the behaviours for steps with `Given`, `When` and `Then`:
 
 ```gherkin
-    @demo-wikipedia
-    Feature: Wikipedia content searching
+    @login-sample
+    Feature: Automation Sample App
 
-        Scenario: Searching in the Wikipedia
-            Given that app is open at Home page
-            When user types "Software Testing"
-            Then the content related is found
+        Scenario: Login the user with its credentials
+            Given that app is open at Login page
+            When user provides their wrong credentials
+            Then user sees "Wrong username or password"
 ```
 
 As you could see, add a **tag** (started with @) trying to choose an easy and intuitive name that reminds you about the Feature. Also, you can include another tag above the scenario, if you want to create new scenarios into the same file. This can make easier to call specific scenarios or an entire feature to be executed via Behave command line.
 
 ##### 1.2. Generate the Step definitions
 
-After having a scenario defined, make sure that `development_mode` is `false` in `env_settings.properties` if you want to execute the `python3 behave_runner.py --tags demo-wikipedia` in the terminal (or set `development_mode` to `true` and include the tag `app-login` to property `debug_behave_tags`). Then, copy the snippet definitions generated automatically in console. You will need to implement your steps using them, like these:
+After having a scenario defined, make sure that `development_mode` is `false` in `env_settings.properties` if you want to execute the `python3 behave_runner.py --tags login-sample` in the terminal (or set `development_mode` to `true` and include the tag `app-login` to property `debug_behave_tags`). Then, copy the snippet definitions generated automatically in console. You will need to implement your steps using them, like these:
 
 ```bash
         You can implement step definitions for undefined steps with these snippets:
 
-        @given('that app is open at Home page')
+        @given(u'that app is open at Login page')
         def step_impl(context):
-            raise NotImplementedError(u'STEP: Given that app is open at Home page')
+            raise NotImplementedError(u'STEP: Given that app is open at Login page')
 
 
-        @when('user types "Software Testing"')
+        @when(u'user provides their wrong credentials')
         def step_impl(context):
-            raise NotImplementedError(u'STEP: When user types "Software Testing"')
+            raise NotImplementedError(u'STEP: When user provides their wrong credentials')
 
 
-        @then('the content related is found')
+        @then(u'user sees "Wrong username or password"')
         def step_impl(context):
-            raise NotImplementedError(u'STEP: Then the content related is found')
+            raise NotImplementedError(u'STEP: Then user sees "Wrong username or password"')
 ```
 
 ##### 1.3. Create a Step skeleton
@@ -528,19 +527,19 @@ Then, just paste your snippets from clipboard into the `search_car_steps.py`.
 from behave import *
 
 
-@given('that app is open at Home page')
+@given(u'that app is open at Login page')
 def step_impl(context):
-    raise NotImplementedError(u'STEP: Given that app is open at Home page')
+    raise NotImplementedError(u'STEP: Given that app is open at Login page')
 
 
-@when('user types "{text_to_search}"')
-def step_impl(context, text_to_search):
-    raise NotImplementedError(u'STEP: When user types "Software Testing"')
-
-
-@then('the content related is found')
+@when(u'user provides their wrong credentials')
 def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the content related is found')
+    raise NotImplementedError(u'STEP: When user provides their wrong credentials')
+
+
+@then(u'user sees "{error}"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then user sees "Wrong username or password"')
 ```
 
 ##### 1.4. Page Object Pattern
@@ -554,8 +553,8 @@ In this case, create a file names ending with `*_page.py` and put them into a fo
 ```
     features
     └─── pages
-        └─── wikipedia_sample
-            │   login_page.py
+        └─── app_sample
+            │   auth_page.py
             │   home_page.py
                 ...
 ```
@@ -592,13 +591,16 @@ Through BaseAppPage, you can take all advantages from default Selenium web drive
 Considering this, extract the element locators inspecting the application's page opened in Appium Desktop and place them into the variables of your Page Object class. But, you will need to import `from appium.webdriver.common.mobileby import MobileBy` into the HomePage, to define a kind of locator for a XCUITest element should be able to interpret (MBy.XPATH, MBy.ACCESSIBILITY_ID, By.IOS_UIAUTOMATION, etc.):
 
 ```python
-from driver_wrappers.appium import BaseAppPage
+from driver_wrappers.appium.native_app_wrapper import BaseAppPage
 from appium.webdriver.common.mobileby import MobileBy as MBy
 
 
-class HomePage(BaseAppPage):
-    loc_input_search_on_click = (MBy.ID, 'org.wikipedia.alpha:id/search_container')
-    loc_input_search = (MBy.ID, 'org.wikipedia.alpha:id/search_src_text')
+class AuthPage(BaseAppPage):
+    loc_lbl_title = (MBy.XPATH, '//android.widget.FrameLayout[1]/android.view.ViewGroup/android.widget.TextView')
+    loc_txt_username = (MBy.ID, 'com.dgotlieb.automationsample:id/userName')
+    loc_txt_password = (MBy.ID, 'com.dgotlieb.automationsample:id/userPassword')
+    loc_btn_login = (MBy.ID, 'com.dgotlieb.automationsample:id/loginButton')
+    loc_lbl_error_message = (MBy.ID, 'com.dgotlieb.automationsample:id/errorTV')
 ```
 
 The locator declared with a tuple (`(MBy.<TYPE>, "<location string>")`) can be called directly using asterisk before a `self.loc_name`.
@@ -618,20 +620,31 @@ To create validation methods for the steps when is necessary (mainly in the `@Th
 Then, you should have a page with an implementation like that:
 
 ```python
-from driver_wrappers.appium.native_app_wrapper import BaseAppPage
-from appium.webdriver.common.mobileby import MobileBy as MBy
+class AuthPage(BaseAppPage):
+    loc_lbl_title = (MBy.XPATH, '//android.widget.FrameLayout[1]/android.view.ViewGroup/android.widget.TextView')
+    loc_txt_username = (MBy.ID, 'com.dgotlieb.automationsample:id/userName')
+    loc_txt_password = (MBy.ID, 'com.dgotlieb.automationsample:id/userPassword')
+    loc_btn_login = (MBy.ID, 'com.dgotlieb.automationsample:id/loginButton')
+    loc_lbl_error_message = (MBy.ID, 'com.dgotlieb.automationsample:id/errorTV')
 
+    def check_title(self):
+        self.is_the_element_presented(*self.loc_lbl_title)
+        
+    def type_input_username(self, input_value):
+        self.wait_for_element(*self.loc_txt_username)
+        # self.click_on(*self.loc_txt_username)
+        self.type_text(input_value, *self.loc_txt_username)
 
-class HomePage(BaseAppPage):
-    loc_input_search_on_click = (MBy.ID, 'org.wikipedia.alpha:id/search_container')
-    loc_input_search = (MBy.ID, 'org.wikipedia.alpha:id/search_src_text')
+    def type_input_password(self, input_value):
+        self.wait_for_element(*self.loc_txt_password)
+        self.type_text(input_value, *self.loc_txt_password)
 
-    def type_input_search(self, text_to_search):
-        self.wait_for_element(*self.loc_input_search_on_click)
-        self.click_on(*self.loc_input_search_on_click)
-        self.wait_for_element(*self.loc_input_search)
-        self.click_on(*self.loc_input_search)
-        self.type_text(text_to_search, *self.loc_input_search)
+    def click_on_login(self):
+        self.click_on(*self.loc_btn_login)
+
+    def validate_error_message(self, message):
+        message_found = self.get_element_text(*self.loc_lbl_error_message)
+        self.assert_that(message_found).contains_the(value_expected=message, optional_description="Login validation message")
 ```
 
 ##### 1.5. Step Implementation
@@ -640,28 +653,26 @@ Having all the pages needed already implemented, you need to call the methods to
 
 ```python
 from behave import *
-from features.pages.wikipedia_sample.home_page import HomePage
+from features.pages.app_sample.auth_page import AuthPage
 
 
-home_page = HomePage(object)
+login_page = AuthPage(object)
 
 
-@given('that app is open at Home page')
-def step_impl(context):
-    # Add any preparation code for the app here
-    pass
+@given('that app is open at Login page')
+def step_given_that_app_is_open_at_login_page(context):
+    login_page.check_title()
 
 
-@when('the user types "{text_to_search}"')
-def step_impl(context, text_to_search):
-    home_page.type_input_search(text_to_search)
+@when('user provides their wrong credentials')
+def step_when_user_types_text_to_search(context):
+    login_page.type_input_username("wrong_user_name")
+    login_page.type_input_password("wrong_pass_123")
 
 
-@then('the content related is found')
-def step_impl(context):
-    # Add any validation for the app here
-    pass
-
+@then('user sees "{error}"')
+def step_then_the_content_related_is_found(context, error):
+    login_page.validate_error_message(message=error)
 ```
 
 And your first test case scenario is ready to be executed for the first time!
@@ -676,7 +687,7 @@ You can combine TAGS like these examples:
 
 - e.g. 2) COMBINING SCENARIOS: `demo-app-login,demo-app-search,...`
 
-- e.g. 3) CALLING ENTIRE FEATURES: `demo-wikipedia`
+- e.g. 3) CALLING ENTIRE FEATURES: `login-sample`
 
 If you leave the parameter related to tags empty, all the features from the environment selected will be executed regardless if is set by properties or by command line.
 

@@ -28,7 +28,7 @@ debug_flag_os = Android
 debug_flag_os_version = 11.0
 debug_flag_device_name = Samsung Galaxy A51
 debug_flag_mode = native_app
-debug_behave_tags = demo-wikipedia
+debug_behave_tags = login-sample
 debug_behave_excluded_tags = wip
 debug_flag_orientation = Portrait
 debug_flag_language = en
@@ -40,7 +40,7 @@ debug_flag_locale = en_GB
     ; debug_flag_os_version = 14.5
     ; debug_flag_device_name = iPhone 12
     ; debug_flag_mode = native_app
-    ; debug_behave_tags = demo-wikipedia
+    ; debug_behave_tags = login-sample
     ; debug_behave_excluded_tags = wip
     ; debug_flag_orientation = Portrait
     ; debug_flag_language = en
@@ -49,7 +49,8 @@ debug_flag_locale = en_GB
 [default-device]
 appium_host_ip = 0.0.0.0
 appium_host_port = 4723
-mobile_automation_name = XCUITest
+mobile_automation_name = UiAutomator2
+# mobile_automation_name = XCUITest
 mobile_app_path =
 
 [local-device]

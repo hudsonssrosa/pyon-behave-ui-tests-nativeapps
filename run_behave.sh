@@ -30,10 +30,11 @@ PYON_EXCLUDED_TAG='wip'
 # cp env_settings.properties.local env_settings.properties
 
 echo '\nSTARTING APPIUM SERVER...'
-# bash -c "\
-#     python appium_setup.py --server start & \
-#     sleep 7
-#     "
+bash -c "\
+    python appium_setup.py --adb install & \
+    python appium_setup.py --adb add_path --server start & \
+    sleep 7
+    "
 echo 'RUNNING BEHAVE TESTS...'
 python behave_runner.py --target $PYON_TARGET \
                         --environment "$PYON_ENVIRONMENT" \

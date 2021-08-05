@@ -42,6 +42,3 @@ report*.html
 # Tunnels
 .ltcbin
 tunnels/
-
-# External Dists
-app_distribution/
