@@ -30,8 +30,8 @@ PYON_EXCLUDED_TAG='wip'
 # cp env_settings.properties.local env_settings.properties
 
 echo '\nSTARTING APPIUM SERVER...'
+    # python appium_setup.py --adb install & \
 bash -c "\
-    python appium_setup.py --adb install & \
     python appium_setup.py --adb add_path --server start & \
     sleep 7
     "

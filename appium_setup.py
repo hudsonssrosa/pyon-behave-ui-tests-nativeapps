@@ -15,6 +15,12 @@ def main(**args):
         default="add_path",
     )
     parser.add_argument(
+        "--carthage",
+        choices=["install"],
+        help="==> Install the Carthage",
+        default="install",
+    )
+    parser.add_argument(
         "--server",
         choices=["start", "stop", "install", "uninstall", "install_and_run"],
         help="==> Manage the Appium Client server execution. e.g.: 'python appium_setup.py --server start'",
@@ -58,7 +64,9 @@ def appium_start(server, localhost, port):
     if server == "start":
         print("\nAPPIM - Starting Client...")
         os.system(f"appium -v")
-        os.system(f"appium --address {localhost} --port {port} &>/dev/null &")
+        os.system("kill -9 `lsof -i TCP:" + str(port) + " | awk '/LISTEN/{print $2}'`")
+        os.system(f"appium --address {localhost} --port {port} &")
+        # os.system(f"appium --address {localhost} --port {port} &>/dev/null &")
         check_created_processes("APPIUM STARTED")
 
 def appium_uninstall(server):
@@ -84,10 +92,33 @@ def appium_install(server):
 def adb_add_env_path(adb):
     if adb == "add_path":
         print("\nADB PATH ENVIRONMENT")
-        os.system("export ANDROID_HOME=~/Library/Android/sdk")
-        os.system("export ANDROID_SDK_ROOT=~/Library/Android/sdk")
-        os.system("export PATH=$PATH:$ANDROID_HOME/platforms:$ANDROID_HOME/platform-tools >> ~/.bash_profile")
-        os.system("source ~/.bash_profile")
+        
+        
+        #INSTALL JAVA - JDK
+        """
+            if which java > /dev/null 2>&1;
+            then
+                java_version=`java -version 2>&1 | head -n 1`
+                echo "Java version $java_version is installed."
+            else
+                echo "No Java executable is found."
+                echo 'JAVA - Installing...'
+                ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+                $ brew tap homebrew/cask-versions
+                brew update
+                brew tap caskroom/cask
+                brew install adoptopenjdk8 --cask
+                brew install android-studio --cask
+            fi
+        """        
+        
+        os.system("export JAVA_HOME=`echo $(/usr/libexec/java_home)` >> ~/.bashrc")
+        os.system("export ANDROID_HOME=$HOME/Library/Android/sdk >> ~/.bashrc")
+        os.system('export ADB_HOME="/usr/local/bin/adb" >> ~/.bashrc')
+        os.system("export PATH=$PATH:$JAVA_HOME:$JAVA_HOME/bin:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ADB_HOME >> ~/.bashrc")
+        os.system("source ~/.bashrc")
+        os.system("echo $PATH")
+        
 
 def adb_install(adb):
     if adb == "install":
@@ -98,6 +129,16 @@ def adb_install(adb):
             os.system("brew reinstall android-platform-tools")
         finally:
             os.system("adb --version")
+
+def carthage_install(carthage):
+    if carthage == "install":
+        try:
+            print("\nCARTHAGE INSTALL - Installing Client ...")
+            os.system("brew install carthage")
+        except: 
+            os.system("brew reinstall carthage")
+        finally:
+            os.system("carthage --version")
 
 
 def check_created_processes(message):
